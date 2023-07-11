@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:math';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -69,8 +70,14 @@ class WebKitWebViewControllerCreationParams
       );
     }
     _configuration.setAllowsInlineMediaPlayback(allowsInlineMediaPlayback);
-    _configuration.setLimitsNavigationsToAppBoundDomains(
-        limitsNavigationsToAppBoundDomains);
+    if (Platform.isIOS) {
+      var iosVersionString = Platform.operatingSystemVersion.split(' ')[1];
+      if ((double.tryParse(iosVersionString) ?? 0) >= 14) {
+        /// Only available for iOS > 14.0
+        _configuration.setLimitsNavigationsToAppBoundDomains(
+           limitsNavigationsToAppBoundDomains);
+      }
+    }
   }
 
   /// Constructs a [WebKitWebViewControllerCreationParams] using a
